@@ -1,13 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// Yugi Muto  estava sofrendo com as tecnologias ultrapassadas das máquinas que guardavam suas cartas, então ele viajou
-// para Russas Ce em busca de uma tecnologia que melhor guardasse suas cartas, chegando na cidade ele decide buscar ajuda
-// na universidade, onde um grupo de alunos decide que árvore binária de busca otimizaria muito os seus equipamentos.
+
+// Yugi Muto  estava sofrendo com as tecnologias ultrapassadas das máquinas que
+// guardavam suas cartas, então ele viajou para Russas-Ce em busca de uma
+// tecnologia que melhor guardasse suas cartas, chegando na cidade ele decide
+// buscar ajuda na universidade, onde um grupo de alunos decide que árvore
+// binária de busca otimizaria muito os seus equipamentos.
+
 typedef struct no {
   int chave;
   int ataque;
   int defesa;
+  int nivel;
+  char *tipo;
   struct no *dir;
   struct no *esq;
   char *nome;
@@ -35,21 +41,27 @@ NO *busca_arvore(int x, NO *pt) {
   }
 }
 
-void insercao_arvore(int x, char *nome, int ataque,int defesa) {
+void insercao_arvore(int x, char *nome, int ataque, int defesa, int nivel,
+                     char *tipo) {
   NO *pt = busca_arvore(x, raiz);
   if (pt != NULL) {
     if (pt->chave == x) {
       printf("Chave duplicada!\n");
     } else {
       NO *pt1 = malloc(sizeof(NO));
+
       pt1->chave = x;
       pt1->nome = malloc((strlen(nome) + 1) * sizeof(char));
       strcpy(pt1->nome, nome);
-
       pt1->ataque = ataque;
       pt1->defesa = defesa;
+      pt1->nivel = nivel;
+      pt1->tipo = malloc((strlen(tipo) + 1) * sizeof(char));
+      strcpy(pt1->tipo, tipo);
+
       pt1->esq = NULL;
       pt1->dir = NULL;
+
       if (x < pt->chave) {
         pt->esq = pt1;
       } else {
@@ -63,6 +75,9 @@ void insercao_arvore(int x, char *nome, int ataque,int defesa) {
     strcpy(pt1->nome, nome);
     pt1->ataque = ataque;
     pt1->defesa = defesa;
+    pt1->nivel = nivel;
+    pt1->tipo = malloc((strlen(tipo) + 1) * sizeof(char));
+    strcpy(pt1->tipo, tipo);
     pt1->esq = NULL;
     pt1->dir = NULL;
     raiz = pt1;
@@ -72,6 +87,7 @@ void insercao_arvore(int x, char *nome, int ataque,int defesa) {
 void pre(NO *pt) {
   if (pt != NULL) {
     printf("%d - %s\n", pt->chave, pt->nome);
+    printf("Nivel:%d Tipo:%s\n", pt->nivel, pt->tipo);
     printf("Ataque:%d Defesa:%d\n", pt->ataque, pt->defesa);
     pre(pt->esq);
     pre(pt->dir);
@@ -80,44 +96,53 @@ void pre(NO *pt) {
 
 void atualizar_arvore(int x) {
   NO *pt = busca_arvore(x, raiz);
-  if (pt != NULL) { // arvore nao ta vazia
-    
-    int R=0;
 
-    while (R != 1 || R != 2 || R != 3) {
-        printf("Quais dados deseja alterar?\n[1]Nome\n[2]Ataque\n[3]Defesa\n[4]Finalizar alterações\n");
-        scanf("%d", &R);
-        
-        if(R == 1){
-            printf("Digite o novo nome da carta: ");
-            char nome_atualizar[50];
-            scanf("%s", nome_atualizar);
-            pt->nome = malloc((strlen(nome_atualizar) + 1) * sizeof(char));
-            strcpy(pt->nome, nome_atualizar);
+  if (pt != NULL && pt->chave == x) { // arvore nao ta vazia
 
-        }
-        else if(R == 2){
-            printf("Digite o novo ataque da carta: ");
-            int ataque_atualizar;
-            scanf("%d", &ataque_atualizar);
-            pt->ataque = ataque_atualizar;
+    int R = 0;
 
-        }
-        else if(R == 3){
-            printf("Digite a nova defesa da carta: ");
-            int defesa_atualizar;
-            scanf("%d", &defesa_atualizar);
-             pt->defesa = defesa_atualizar;
+    while (R != 1 || R != 2 || R != 3 || R != 4 || R != 5 || R != 6) {
+      printf("Quais dados deseja "
+             "alterar?\n[1]Nome\n[2]Ataque\n[3]Defesa\n[4]nivel\n[5]Tipo\n[6]"
+             "Finalizar alterações\n");
+      scanf("%d", &R);
 
-        }else if(R == 4){
-            break;
-        }
-        else{
-            printf("Opção inválida. Tente novamente.\n");
+      if (R == 1) {
+        printf("Digite o novo nome da carta: ");
+        char nome_atualizar[50];
+        scanf("%s", nome_atualizar);
+        pt->nome = malloc((strlen(nome_atualizar) + 1) * sizeof(char));
+        strcpy(pt->nome, nome_atualizar);
 
-        }
-        
-  }
+      } else if (R == 2) {
+        printf("Digite o novo ataque da carta: ");
+        int ataque_atualizar;
+        scanf("%d", &ataque_atualizar);
+        pt->ataque = ataque_atualizar;
+
+      } else if (R == 3) {
+        printf("Digite a nova defesa da carta: ");
+        int defesa_atualizar;
+        scanf("%d", &defesa_atualizar);
+        pt->defesa = defesa_atualizar;
+
+      } else if (R == 4) {
+        printf("Digite o novo nivel da carta: ");
+        int nivel_atualizar;
+        scanf("%d", &nivel_atualizar);
+        pt->nivel = nivel_atualizar;
+      } else if (R == 5) {
+        printf("Digite o novo tipo da carta: ");
+        char tipo_atualizar[50];
+        scanf("%s", tipo_atualizar);
+        pt->tipo = malloc((strlen(tipo_atualizar) + 1) * sizeof(char));
+        strcpy(pt->tipo, tipo_atualizar);
+      } else if (R == 6) {
+        break;
+      } else {
+        printf("Opção inválida. Tente novamente.\n");
+      }
+    }
 
   } else { // arvore vazia
     printf("Elemento não encontrado\n");
@@ -126,8 +151,10 @@ void atualizar_arvore(int x) {
 
 NO *deleteNode(NO *raiz, int k) {
   // Caso base
-  if (raiz == NULL)
+  if (raiz == NULL) {
+    printf("Elemento não encontrado");
     return raiz;
+  }
 
   // Chamadas recursivas para os ancestrais do nó a ser deletado
   if (raiz->chave > k) {
@@ -183,7 +210,6 @@ NO *deleteNode(NO *raiz, int k) {
   }
 }
 
-
 void exibirMenu() {
   printf("\n--- Menu ---\n");
   printf("1. Inserir uma carta\n");
@@ -208,25 +234,32 @@ int main() {
       int chave;
       scanf("%d", &chave);
 
-      printf("Digite o ataque do carta: ");
+      printf("Digite o ataque da carta: ");
       int ataque;
       scanf("%d", &ataque);
 
-      printf("Digite a defesa do carta: ");
+      printf("Digite a defesa da carta: ");
       int defesa;
       scanf("%d", &defesa);
 
-      printf("Digite o nome do carta: ");
+      printf("Digite o nivel da carta: ");
+      int nivel;
+      scanf("%d", &nivel);
+
+      printf("Digite o tipo da carta: ");
+      char tipo[50];
+      scanf("%s", tipo);
+
+      printf("Digite o nome da carta: ");
       char nome[50];
       scanf("%s", nome);
 
-      insercao_arvore(chave, nome,ataque,defesa);
+      insercao_arvore(chave, nome, ataque, defesa, nivel, tipo);
       break;
     case 2:
       printf("Digite a chave da carta a ser atualizada: ");
       int chave_atualizar;
       scanf("%d", &chave_atualizar);
-
 
       atualizar_arvore(chave_atualizar);
       break;
